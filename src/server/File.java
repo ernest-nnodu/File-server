@@ -1,4 +1,4 @@
-package server.Entity;
+package server;
 
 public class File {
     String name;
