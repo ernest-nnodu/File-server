@@ -22,6 +22,10 @@ public class FileRepository {
                 .findFirst();
     }
 
+    public boolean deleteFile(File file) {
+        return files.remove(file);
+    }
+
     public boolean fileExists(String name) {
         return files.stream()
                 .anyMatch(file -> file.getName().equals(name));

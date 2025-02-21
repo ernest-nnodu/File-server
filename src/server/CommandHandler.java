@@ -9,13 +9,11 @@ public class CommandHandler {
     }
 
     public String execute(String command, String fileName) {
-        switch (command) {
-            case "add":
-                return fileService.addFile(fileName);
-            case "get":
-                return fileService.getFile(fileName);
-            default:
-                return "Command not recognised!";
-        }
+        return switch (command) {
+            case "add" -> fileService.addFile(fileName);
+            case "get" -> fileService.getFile(fileName);
+            case "delete" -> fileService.deleteFile(fileName);
+            default -> "Command not recognised!";
+        };
     }
 }
