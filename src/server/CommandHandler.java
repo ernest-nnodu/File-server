@@ -12,6 +12,8 @@ public class CommandHandler {
         switch (command) {
             case "add":
                 return fileService.addFile(fileName);
+            case "get":
+                return fileService.getFile(fileName);
             default:
                 return "Command not recognised!";
         }

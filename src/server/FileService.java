@@ -1,5 +1,7 @@
 package server;
 
+import java.util.Optional;
+
 public class FileService {
 
     private final FileRepository fileRepository;
@@ -9,7 +11,7 @@ public class FileService {
     }
 
     public String addFile(String name) {
-        if (!name.matches("file[1-9]{1}|file10")) {
+        if (!name.matches("file[1-9]|file10")) {
             return "Cannot add the file " + name;
         }
 
@@ -19,5 +21,12 @@ public class FileService {
 
         fileRepository.addFile(new File(name));
         return "The file " + name + " added successfully";
+    }
+
+    public String getFile(String name) {
+        Optional<File> file = fileRepository.getFile(name);
+
+        return file.isPresent() ? "The file " + name + " was sent" :
+                "The file " + name + " not found";
     }
 }
