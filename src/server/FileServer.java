@@ -1,26 +1,30 @@
 package server;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 public class FileServer {
-
-    private final UserInterface userInterface;
-    private final CommandHandler commandHandler;
-
-    public FileServer() {
-        userInterface = new UserInterface();
-        commandHandler = new CommandHandler();
-    }
+    private final String address = "127.0.0.1";
+    private final int port = 23456;
+    private final int backlog = 50;
 
     public void start() {
-
-        String input = userInterface.getUserInput();
-
-        while (!input.equals("exit")) {
-
-            String command = input.split(" ")[0];
-            String fileName = input.split(" ")[1];
-
-            userInterface.displayMessage(commandHandler.execute(command, fileName));
-            input = userInterface.getUserInput();
+        System.out.println("Server started!");
+        try(ServerSocket serverSocket = new ServerSocket(port, backlog,
+                InetAddress.getByName(address))) {
+            try(Socket socket = serverSocket.accept();
+                DataInputStream inputStream = new DataInputStream(socket.getInputStream());
+                DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream())) {
+                String msg = inputStream.readUTF();
+                System.out.println(msg);
+                outputStream.writeUTF("All files were sent!");
+            }
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 }
