@@ -3,6 +3,7 @@ package server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -19,9 +20,13 @@ public class FileServer {
             try(Socket socket = serverSocket.accept();
                 DataInputStream inputStream = new DataInputStream(socket.getInputStream());
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream())) {
-                String msg = inputStream.readUTF();
-                System.out.println(msg);
-                outputStream.writeUTF("All files were sent!");
+
+                String msgFromClient = inputStream.readUTF();
+                System.out.println("Received: " + msgFromClient);
+
+                String msgToClient = "All files were sent!";
+                outputStream.writeUTF(msgToClient);
+                System.out.println("Sent: " + msgToClient);
             }
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
