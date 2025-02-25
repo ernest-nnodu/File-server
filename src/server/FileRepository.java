@@ -35,7 +35,19 @@ public class FileRepository {
     }
 
     public Optional<File> getFile(String name) {
-        return Optional.empty();
+        if (!fileExists(name)) {
+            return Optional.empty();
+        }
+
+        Path filePath = getFilePath(name);
+        String fileContent = "";
+
+        try {
+            fileContent = Files.readString(filePath);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return Optional.of(new File(name, fileContent));
     }
 
     public void deleteFile(File file) {

@@ -60,13 +60,17 @@ public class FileServer {
                 String content = extractRequestDetail(requestFromClient, "content");
                 return createFile(fileName, content);
             case "GET":
-                break;
+                return getFile(fileName);
             case "DELETE":
                 break;
             default:
                 return "Invalid command";
         }
         return command;
+    }
+
+    private String getFile(String fileName) {
+        return fileService.getFile(fileName);
     }
 
     private String extractRequestDetail(String requestFromClient, String detailToExtract) {

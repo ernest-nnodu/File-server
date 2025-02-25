@@ -52,6 +52,14 @@ public class FileClient {
     }
 
     private void deleteFileOnServer(String fileName) {
+        /*String request = "DELETE " + fileName;
+        sendRequest(request);
+        String response = getResponse();
+        if (response == null) {
+            userInterface.displayMessage("The response says that the file was not found!");
+            return;
+        }
+        userInterface.displayMessage("The response says that : " + response);*/
     }
 
     private void createFileOnServer(String fileName) {
@@ -59,22 +67,29 @@ public class FileClient {
         String fileContent = userInterface.getUserInput();
         String request = "PUT " + fileName + " " + fileContent;
         sendRequest(request);
-        getResponse();
+        String response = getResponse();
+        userInterface.displayMessage("The response says that " + response);
     }
 
     private void getFileFromServer(String fileName) {
         String request = "GET " + fileName;
         sendRequest(request);
-        getResponse();
+        String response = getResponse();
+        if (response.isBlank()) {
+            userInterface.displayMessage("The response says that the file was not found!");
+            return;
+        }
+        userInterface.displayMessage("The content of the file is: " + response);
     }
 
-    private void getResponse() {
+    private String getResponse() {
+        String response = "";
         try {
-            String response = inputStream.readUTF();
-            userInterface.displayMessage("The response says that " + response);
+            response = inputStream.readUTF();
         } catch (IOException ex) {
             userInterface.displayMessage(ex.getMessage());
         }
+        return response;
     }
 
     private void sendRequest(String request) {
@@ -88,11 +103,11 @@ public class FileClient {
 
     private void connectToServer() {
         try {
-            TimeUnit.SECONDS.sleep(3);
+            //TimeUnit.SECONDS.sleep(3);
             socket = new Socket(InetAddress.getByName(SERVER_ADDRESS), SERVER_PORT);
             inputStream = new DataInputStream(socket.getInputStream());
             outputStream = new DataOutputStream(socket.getOutputStream());
-        } catch (IOException | InterruptedException ex) {
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
     }

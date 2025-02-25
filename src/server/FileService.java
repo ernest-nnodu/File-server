@@ -24,8 +24,7 @@ public class FileService {
     public String getFile(String name) {
         Optional<File> file = fileRepository.getFile(name);
 
-        return file.isPresent() ? "The file " + name + " was sent" :
-                "The file " + name + " not found";
+        return file.map(File::getContent).orElse("");
     }
 
     public String deleteFile(String name) {
