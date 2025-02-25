@@ -52,14 +52,14 @@ public class FileClient {
     }
 
     private void deleteFileOnServer(String fileName) {
-        /*String request = "DELETE " + fileName;
+        String request = "DELETE " + fileName;
         sendRequest(request);
         String response = getResponse();
-        if (response == null) {
+        if (response.isBlank()) {
             userInterface.displayMessage("The response says that the file was not found!");
             return;
         }
-        userInterface.displayMessage("The response says that : " + response);*/
+        userInterface.displayMessage("The response says that : " + response);
     }
 
     private void createFileOnServer(String fileName) {

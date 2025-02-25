@@ -24,7 +24,6 @@ public class FileServer {
     public void start() {
         System.out.println("Server started!");
         connectToClient();
-        System.out.println("Goodbye!");
     }
 
     private void connectToClient() {
@@ -36,7 +35,6 @@ public class FileServer {
                     outputStream = new DataOutputStream(socket.getOutputStream());
 
                     String requestFromClient = inputStream.readUTF();
-                    System.out.println(requestFromClient);
 
                     if (requestFromClient.equals("exit")) {
                         shutdown();
@@ -55,18 +53,19 @@ public class FileServer {
         String command = extractRequestDetail(requestFromClient, "command");
         String fileName = extractRequestDetail(requestFromClient, "file name");
 
-        switch (command) {
-            case "PUT":
+        return switch (command) {
+            case "PUT" -> {
                 String content = extractRequestDetail(requestFromClient, "content");
-                return createFile(fileName, content);
-            case "GET":
-                return getFile(fileName);
-            case "DELETE":
-                break;
-            default:
-                return "Invalid command";
-        }
-        return command;
+                yield createFile(fileName, content);
+            }
+            case "GET" -> getFile(fileName);
+            case "DELETE" -> deleteFile(fileName);
+            default -> "Invalid command";
+        };
+    }
+
+    private String deleteFile(String fileName) {
+        return fileService.deleteFile(fileName);
     }
 
     private String getFile(String fileName) {
@@ -95,7 +94,6 @@ public class FileServer {
     }
 
     private void shutdown() {
-        System.out.println("Shutting down server...");
         try {
             serverSocket.close();
             socket.close();

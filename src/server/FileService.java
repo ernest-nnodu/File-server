@@ -28,15 +28,12 @@ public class FileService {
     }
 
     public String deleteFile(String name) {
-
-        Optional<File> fileToDelete = fileRepository.getFile(name);
-
-        if (fileToDelete.isEmpty()) {
-            return "The file " + name + " not found";
+        if (!fileRepository.fileExists(name)) {
+            return "";
         }
 
-        fileRepository.deleteFile(fileToDelete.get());
+        fileRepository.deleteFile(name);
 
-        return "The file " + name + " was deleted";
+        return "the file was successfully deleted!";
     }
 }

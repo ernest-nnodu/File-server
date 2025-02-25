@@ -50,7 +50,14 @@ public class FileRepository {
         return Optional.of(new File(name, fileContent));
     }
 
-    public void deleteFile(File file) {
+    public void deleteFile(String name) {
+        Path filePath = getFilePath(name);
+
+        try {
+            Files.delete(filePath);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     public boolean fileExists(String name) {
