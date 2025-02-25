@@ -1,13 +1,11 @@
 package server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class FileServer {
@@ -26,38 +24,40 @@ public class FileServer {
     public void start() {
         System.out.println("Server started!");
         connectToClient();
+        System.out.println("Goodbye!");
     }
 
     private void connectToClient() {
-        try {
-            serverSocket = new ServerSocket(port, backlog, InetAddress.getByName(address));
-            socket = serverSocket.accept();
-            inputStream = new DataInputStream(socket.getInputStream());
-            outputStream = new DataOutputStream(socket.getOutputStream());
+            try {
+                serverSocket = new ServerSocket(port, backlog, InetAddress.getByName(address));
+                while (true) {
+                    socket = serverSocket.accept();
+                    inputStream = new DataInputStream(socket.getInputStream());
+                    outputStream = new DataOutputStream(socket.getOutputStream());
 
-            while (true) {
-                String requestFromClient = inputStream.readUTF();
-                if (requestFromClient.equals("exit")) {
-                    shutdown();
-                    break;
+                    String requestFromClient = inputStream.readUTF();
+                    System.out.println(requestFromClient);
+
+                    if (requestFromClient.equals("exit")) {
+                        shutdown();
+                        break;
+                    }
+                    String response = processRequest(requestFromClient);
+                    outputStream.writeUTF(response);
                 }
-                String response = processRequest(requestFromClient);
-                outputStream.writeUTF(response);
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
             }
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
     }
 
     private String processRequest(String requestFromClient) {
 
-        String[] requestDetails = requestFromClient.split(" ");
-        String command = requestDetails[0];
-        String fileName = requestDetails[1];
+        String command = extractRequestDetail(requestFromClient, "command");
+        String fileName = extractRequestDetail(requestFromClient, "file name");
 
         switch (command) {
             case "PUT":
-                String content = String.join("", Arrays.copyOfRange(requestDetails, 2, requestDetails.length));
+                String content = extractRequestDetail(requestFromClient, "content");
                 return createFile(fileName, content);
             case "GET":
                 break;
@@ -67,6 +67,23 @@ public class FileServer {
                 return "Invalid command";
         }
         return command;
+    }
+
+    private String extractRequestDetail(String requestFromClient, String detailToExtract) {
+        String[] details = requestFromClient.split(" ");
+
+        return switch (detailToExtract) {
+            case "command" -> details[0];
+            case "file name" -> details[1];
+            case "content" -> {
+                StringBuilder builder = new StringBuilder();
+                for (int index = 2; index < details.length; index++) {
+                    builder.append(details[index]).append(" ");
+                }
+                yield builder.toString();
+            }
+            default -> "";
+        };
     }
 
     private String createFile(String fileName, String content) {

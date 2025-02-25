@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 
 public class FileClient {
     private static final String SERVER_ADDRESS = "127.0.0.1";
@@ -87,10 +88,11 @@ public class FileClient {
 
     private void connectToServer() {
         try {
+            TimeUnit.SECONDS.sleep(3);
             socket = new Socket(InetAddress.getByName(SERVER_ADDRESS), SERVER_PORT);
             inputStream = new DataInputStream(socket.getInputStream());
             outputStream = new DataOutputStream(socket.getOutputStream());
-        } catch (IOException ex) {
+        } catch (IOException | InterruptedException ex) {
             System.out.println(ex.getMessage());
         }
     }

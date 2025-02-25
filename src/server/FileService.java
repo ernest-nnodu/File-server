@@ -12,12 +12,9 @@ public class FileService {
     }
 
     public String addFile(String name, String content) {
-        /*if (!name.matches("file[1-9]|file10")) {
-            return "Cannot add the file " + name;
-        }*/
 
         if (fileRepository.fileExists(name)) {
-            return "Cannot add the file " + name;
+            return "creating the file was forbidden!";
         }
 
         fileRepository.addFile(new File(name, content));

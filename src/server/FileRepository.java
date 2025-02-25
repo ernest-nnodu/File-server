@@ -11,12 +11,13 @@ import java.util.Optional;
 public class FileRepository {
 
     private final String currentDir = System.getProperty("user.dir");
+    private final Path path = Paths.get(currentDir, "src", "server", "data");
     private final Path folderPath = Paths.get(currentDir, "File Server",
             "task", "src", "server", "data");
 
     public FileRepository() {
         try {
-            Files.createDirectories(folderPath);
+            Files.createDirectories(path);
             System.out.println("Folder created successfully!");
         } catch (IOException ex) {
             System.out.println("Unable to create folder!");
@@ -24,7 +25,7 @@ public class FileRepository {
     }
 
     public void addFile(File file) {
-        Path filePath = Paths.get(folderPath.toString(), file.getName());
+        Path filePath = getFilePath(file.getName());
         try {
             Files.createFile(filePath);
             Files.writeString(filePath, file.getContent());
@@ -41,6 +42,10 @@ public class FileRepository {
     }
 
     public boolean fileExists(String name) {
-        return false;
+        return Files.exists(getFilePath(name));
+    }
+
+    private Path getFilePath(String name) {
+        return Paths.get(path.toString(), name);
     }
 }

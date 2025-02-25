@@ -1,8 +1,8 @@
 package server;
 
 public class File {
-    String name;
-    String content;
+    private String name;
+    private String content;
 
     public File(String name, String content) {
 
