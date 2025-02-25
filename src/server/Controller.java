@@ -1,5 +1,7 @@
 package server;
 
+import client.UserInterface;
+
 public class Controller {
 
     private final UserInterface userInterface;
